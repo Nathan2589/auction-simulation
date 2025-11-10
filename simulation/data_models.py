@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+
 
 @dataclass
 class AgentProfile:
@@ -11,6 +11,11 @@ class Bid:
     agent_id: int
     bid_amount: float
 
+@dataclass
+class AuctionState:
+    agent_id: int
+    private_value: float
+    round_number: int
 
 @dataclass 
 class AuctionResult:
