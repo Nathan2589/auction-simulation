@@ -3,7 +3,11 @@
 from simulation.data_models import Bid, AuctionResult
 import random
 
-def run_auction(bids: list[Bid], auction_id: int, random_seed: int) -> AuctionResult:
+def run_auction(bids: list[Bid], auction_id: int, rng: random.Random | None = None) -> AuctionResult:
+
+    if rng is None:
+        rng = random.Random()
+
     if not bids:
        
         return AuctionResult(
@@ -22,12 +26,12 @@ def run_auction(bids: list[Bid], auction_id: int, random_seed: int) -> AuctionRe
             winning_bid=0.0,
             all_bids=bids,
         )
-    if random_seed is not None:
-        random.seed(random_seed)
+    
     
     highest_bid = max(bid.bid_amount for bid in filtered_bids)
     tied_bids = [bid for bid in filtered_bids if bid.bid_amount == highest_bid]
-    winning_bid = random.choice(tied_bids)
+    # Use provided RNG rather than global random to maintain determinism
+    winning_bid = rng.choice(tied_bids)
 
 
     

@@ -3,22 +3,23 @@ from simulation.data_models import Bid, AuctionResult, AgentProfile, AuctionStat
 from agents.base_agent import BaseAgent
 import random
 class AuctionEnvironment:
-    def __init__(self, auction_id: int, random_seed: int = None, agents: list[BaseAgent] = None, round_limit: int = 1):
+    def __init__(self, auction_id: int, random_seed: int = None, agents: list[BaseAgent] = None):
         self.auction_id = auction_id
-        self.random_seed = random_seed
+        self.auction_rng = random.Random(random_seed) #tie-breaking RNG
+        self.value_rng = random.Random(random_seed)   #private value RNG
         self.agents: list[BaseAgent] = agents if agents is not None else []
         
         
         
 
     def conduct_auction(self, current_round_bids: list[Bid]) -> AuctionResult:
-        self.result = run_auction(current_round_bids, self.auction_id, self.random_seed)
+        self.result = run_auction(current_round_bids, self.auction_id, self.auction_rng)
         return self.result
     
     def _setup_round(self, round_number: int):
         round_auction_state = []
         for agent in self.agents:
-            private_value = random.uniform(0, 100)  
+            private_value = self.value_rng.uniform(0, 100)  
             state = AuctionState(
                 agent_id=agent.agent_id,
                 private_value=private_value,
@@ -43,3 +44,4 @@ class AuctionEnvironment:
             current_round_bids = self._play_round(round_number, round_auction_state, simulation_results)
             result = self.conduct_auction(current_round_bids)
             simulation_results.append(result)
+        return simulation_results
