@@ -17,9 +17,7 @@ class LLMAgent(BaseAgent):
         self.model = model
     
     def _format_prompt(self, auction_state: AuctionState, history: list[AuctionResult]) -> str:
-        prompt = f"You are a strategic bidder in a first-price sealed-bid auction.\n"
-        prompt += f"If you win, you pay your bid amount. Your goal is to maximise your profit over multiple rounds.\n"
-        prompt += f"For this auction round, your private value for the item is: {auction_state.private_value}\n"
+        prompt = f"For this auction round, your private value for the item is: {auction_state.private_value}\n"
         if auction_state.round_number > 1:
             prompt += f"Here is the history of previous auctions:\n"
             for result in history:
