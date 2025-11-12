@@ -33,4 +33,16 @@ class LLMAgent(BaseAgent):
         prompt += "Based on this information, what is your bid amount for this auction round?\n"
         prompt += "Output your reasoning first, then on a new line provide your bid amount in the format: BID: <amount>\n"
         return prompt
+    
+    def get_bid(self, auction_state: AuctionState, history: list[AuctionResult]) -> Bid:
+        prompt = self._format_prompt(auction_state, history)
+
+        response = self.client.messages.create(
+            model= self.model,
+            max_tokens=500,
+            system="You are a strategic bidder in a first-price sealed-bid auction.\nIf you win, you pay your bid amount. Your goal is to maximise your profit over multiple rounds.\n",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
         
