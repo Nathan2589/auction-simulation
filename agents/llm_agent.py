@@ -3,6 +3,7 @@ from agents.base_agent import BaseAgent
 import anthropic
 from dotenv import load_dotenv
 import os
+import re
 
 load_dotenv()
 
@@ -32,7 +33,31 @@ class LLMAgent(BaseAgent):
             prompt += "This is the first auction round, so there is no history.\n"
         prompt += "Based on this information, what is your bid amount for this auction round?\n"
         prompt += "Output your reasoning first, then on a new line provide your bid amount in the format: BID: <amount>\n"
+        print(f"Formatted prompt: {prompt}")
         return prompt
+    
+    def _parse_bid_from_response(self, response: dict) -> float:
+        text = ""
+        if isinstance(response, dict):
+            content = response.get("content")
+            if isinstance(content, list):
+                parts = []
+                for item in content:
+                    if isinstance(item, dict) and item.get("type") == "text":
+                        parts.append(item.get("text", ""))
+                text = "".join(parts).strip()
+        # fallback to string conversion
+        if not text:
+            text = str(response)
+
+        match = re.search(r'BID\s*[:\-]\s*([0-9]+(?:\.[0-9]+)?)', text, re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+        
+        raise ValueError("Could not parse bid amount from LLM response.")
+
+        
+
     
     def get_bid(self, auction_state: AuctionState, history: list[AuctionResult]) -> Bid:
         prompt = self._format_prompt(auction_state, history)
@@ -45,4 +70,7 @@ class LLMAgent(BaseAgent):
                 {"role": "user", "content": prompt}
             ]
         )
+        print(f"LLM Response: {response}")
+        bid_amount = self._parse_bid_from_response(response)
+        return Bid(agent_id=self.agent_id, bid_amount=bid_amount)
         
