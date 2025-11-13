@@ -12,9 +12,11 @@ class AuctionEnvironment:
         
         
 
-    def conduct_auction(self, current_round_bids: list[Bid]) -> AuctionResult:
-        self.result = run_auction(current_round_bids, self.auction_id, self.auction_rng)
-        return self.result
+    def conduct_auction(self, current_round_bids: list[Bid], round_auction_state: list[AuctionState], round_number: int) -> AuctionResult:
+        result = run_auction(current_round_bids, self.auction_id, self.auction_rng, round_number=round_number)
+        private_values = {state.agent_id: state.private_value for state in round_auction_state}
+        result.private_values = private_values
+        return result
     
     def _setup_round(self, round_number: int):
         round_auction_state = []
@@ -42,6 +44,6 @@ class AuctionEnvironment:
         for round_number in range(1, num_rounds + 1):
             round_auction_state = self._setup_round(round_number)
             current_round_bids = self._play_round(round_number, round_auction_state, simulation_results)
-            result = self.conduct_auction(current_round_bids)
+            result = self.conduct_auction(current_round_bids, round_auction_state, round_number=round_number)
             simulation_results.append(result)
         return simulation_results
