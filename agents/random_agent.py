@@ -8,10 +8,12 @@ class RandomAgent(base_agent.BaseAgent):
         super().__init__(agent_id)
         self.rng = random.Random(random_seed)
 
+    ## get bid for single-item auction
     def get_bid(self, auction_state, history):
         bid_amount = self.rng.uniform(0, auction_state.private_value)
         return base_agent.Bid(agent_id=self.agent_id, bid_amount=bid_amount)
-
+    
+    ## get bids for multi-item auction
     def get_item_bids(
         self,
         auction_state: MultiItemAuctionState,
