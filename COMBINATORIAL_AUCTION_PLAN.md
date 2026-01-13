@@ -21,7 +21,7 @@ Extend the auction simulation to support **combinatorial auctions** where LLM ag
 - `simulation/data_models.py` - Add `Item`, `MultiItemAuctionState`, `ItemBid`, `MultiItemAuctionResult`
 - `simulation/auction_environment.py` - Generate per-item private values, collect per-item bids
 - `agents/base_agent.py` - Add `get_item_bids()` returning `list[ItemBid]`
-- `agents/random_agent.py` - Implement `RandomMultiItemAgent`
+- `agents/random_agent.py` - Extend RandomAgent class to include get_item_bids() -> `list[ItemBid]`
 
 **Testing**: Run with 3-5 items, verify each allocated independently
 
