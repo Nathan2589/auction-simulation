@@ -8,7 +8,7 @@ HAS_KEY = bool(os.getenv("ANTHROPIC_API_KEY"))
 @unittest.skipUnless(HAS_KEY, "ANTHROPIC_API_KEY not set in environment variables.")
 class TestLLMIntegration(unittest.TestCase):
     def setUp(self):
-        self.agent = LLMAgent(agent_id=0, model=os.getenv("TEST_LLM_MODEL", "claude-sonnet-4-20250514"))
+        self.agent = LLMAgent(agent_id=0, model=os.getenv("TEST_LLM_MODEL", "claude-3-5-haiku-20241022"))
 
     def test_llm_agent_get_bid(self):
         state = AuctionState(
