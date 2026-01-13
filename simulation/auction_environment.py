@@ -3,6 +3,7 @@ from simulation.data_models import (
     Bid, AuctionResult, AgentProfile, AuctionState,
     Item, ItemBid, MultiItemAuctionState, MultiItemAuctionResult
 )
+from simulation.valuation_models import ValuationModel, AdditiveValuation
 from agents.base_agent import BaseAgent
 import random
 class AuctionEnvironment:
@@ -60,13 +61,15 @@ class MultiItemAuctionEnvironment:
         auction_id: int,
         items: list[Item],
         agents: list[BaseAgent],
-        random_seed: int = None
+        random_seed: int = None,
+        valuation_model: ValuationModel = None
     ):
         self.auction_id = auction_id
         self.items = items
         self.agents = agents
         self.auction_rng = random.Random(random_seed)
         self.value_rng = random.Random(random_seed)
+        self.valuation_model = valuation_model if valuation_model else AdditiveValuation()
 
     def _setup_round(self, round_number: int) -> list[MultiItemAuctionState]:
         """Generate private values for each agent for each item."""
@@ -80,7 +83,8 @@ class MultiItemAuctionEnvironment:
                 agent_id=agent.agent_id,
                 round_number=round_number,
                 items=self.items,
-                private_values=private_values
+                private_values=private_values,
+                valuation_model=self.valuation_model
             )
             round_states.append(state)
         return round_states

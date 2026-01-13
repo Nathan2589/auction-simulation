@@ -1,4 +1,9 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from simulation.valuation_models import ValuationModel
 
 
 @dataclass
@@ -51,7 +56,8 @@ class MultiItemAuctionState:
     agent_id: int
     round_number: int
     items: list[Item]
-    private_values: dict[int, float]  # item_id -> value
+    private_values: dict[int, float]  # item_id -> base value
+    valuation_model: ValuationModel | None = None  # for computing bundle values
 
 
 @dataclass
