@@ -10,7 +10,7 @@ This is a first-price sealed-bid auction simulation that pits LLM-powered agents
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 # Run the simulation
 python main.py
